@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import {
-  View, Text, StyleSheet, FlatList, TouchableOpacity,
+  View, Text, StyleSheet, FlatList, TouchableOpacity, Image,
   ActivityIndicator, TextInput
 } from 'react-native';
-import { ShoppingCart, ArrowUp, ArrowDown } from 'lucide-react-native';
+import { ShoppingCart, ArrowUp, ArrowDown, Package } from 'lucide-react-native';
 import { useAuthStore } from '../../stores/authStore';
 import { useProductsStore } from '../../stores/productsStore';
 import { useCartStore } from '../../stores/cartStore';
@@ -13,6 +13,12 @@ export default function Products() {
   const user = useAuthStore((s) => s.user);
   const role = (user?.role || '').toLowerCase();
   const canAddToCart = role === 'user';
+  const isAdmin = role === 'admin';
+  const subtitle = canAddToCart
+    ? 'Add items directly to your cart.'
+    : isAdmin
+      ? 'Browse products. Manage them in the Admin tab.'
+      : 'Log in as a user to add to cart.';
 
   const items = useProductsStore((s) => s.items);
   const isLoading = useProductsStore((s) => s.isLoading);
@@ -52,9 +58,7 @@ export default function Products() {
         <View>
           <Text style={styles.title}>Products</Text>
           <Text style={styles.subtitle}>
-            {canAddToCart
-              ? 'Add items directly to your cart.'
-              : 'Log in as a user to add to cart.'}
+            {subtitle}
           </Text>
         </View>
       </View>
@@ -118,6 +122,13 @@ export default function Products() {
           keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
             <View style={styles.card}>
+              {item.image_url ? (
+                <Image source={{ uri: item.image_url }} style={styles.cardImage} resizeMode="cover" />
+              ) : (
+                <View style={[styles.cardImage, styles.cardImagePlaceholder]}>
+                  <Package size={22} color={colors.slate500} />
+                </View>
+              )}
               <View style={styles.cardInfo}>
                 <Text style={styles.cardName}>{item.name}</Text>
                 <Text style={styles.cardMeta}>
@@ -153,7 +164,7 @@ export default function Products() {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: colors.white },
   headerRow: { marginBottom: 16 },
-  title: { fontSize: 24, fontWeight: '800', color: colors.slate900 },
+  title: { fontSize: 20, fontWeight: '700', color: colors.slate900 },
   subtitle: { fontSize: 13, color: colors.slate600, marginTop: 4 },
   toolbar: { marginBottom: 16, gap: 10 },
   searchRow: { flexDirection: 'row', gap: 8 },
@@ -189,7 +200,9 @@ const styles = StyleSheet.create({
     padding: 14, marginBottom: 10, backgroundColor: colors.white,
   },
   cardInfo: { flex: 1, marginRight: 10 },
-  cardName: { fontSize: 15, fontWeight: '800', color: colors.slate900 },
+  cardImage: { width: 64, height: 64, borderRadius: radius.md, marginRight: 12, backgroundColor: colors.slate50 },
+  cardImagePlaceholder: { alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.slate200 },
+  cardName: { fontSize: 14, fontWeight: '700', color: colors.slate900 },
   cardMeta: { fontSize: 12, color: colors.slate600, marginTop: 4 },
   cardMetaBold: { fontWeight: '700', color: colors.slate800 },
   addBtn: {

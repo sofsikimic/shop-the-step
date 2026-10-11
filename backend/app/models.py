@@ -27,6 +27,7 @@ class Product(db.Model):
     unit = db.Column(db.String(50), nullable=True, default="piece")
     price = db.Column(db.Numeric(10, 2), nullable=False)  
     stock = db.Column(db.Integer, nullable=False, default=0)
+    image_url = db.Column(db.String(500), nullable=True)
 
     created_at = db.Column(db.DateTime, server_default=db.func.now(), nullable=False)
     updated_at = db.Column(

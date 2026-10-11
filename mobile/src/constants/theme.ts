@@ -77,6 +77,7 @@ export const colors = {
   slate200: '#e2e8f0',
   slate50: '#f8fafc',
   white: '#ffffff',
+  slate800: '#1e293b',
 };
 
 export const radius = {

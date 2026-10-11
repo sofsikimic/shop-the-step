@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
   cancelBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: colors.red, padding: 12, borderRadius: radius.sm, marginTop: 16 },
   cancelBtnText: { color: colors.white, fontWeight: '700', fontSize: 14 },
   cancelNote: { backgroundColor: colors.slate50, borderWidth: 1, borderColor: colors.slate200, borderRadius: radius.sm, padding: 12, marginTop: 16 },
-  cancelNoteText: { fontSize: 12, color: colors.slate600 },
+  cancelNoteText: { fontSize: 11, color: colors.slate600 },
   profileBtn: { borderWidth: 1, borderColor: colors.slate200, backgroundColor: colors.white, padding: 12, borderRadius: radius.sm, alignItems: 'center', marginTop: 10 },
   profileBtnText: { fontSize: 14, fontWeight: '700', color: colors.slate700 },
   emptyCard: { margin: 16, borderWidth: 1, borderColor: colors.slate200, borderRadius: radius.lg, backgroundColor: colors.white, padding: 32, alignItems: 'center' },

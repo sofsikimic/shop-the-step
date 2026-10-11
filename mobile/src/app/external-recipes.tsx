@@ -148,6 +148,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.red, paddingHorizontal: 10, paddingVertical: 6,
     borderRadius: radius.sm, marginTop: 8, alignSelf: 'flex-start',
   },
-  watchBtnText: { color: '#fff', fontWeight: '700', fontSize: 12 },
+  watchBtnText: { color: '#fff', fontWeight: '700', fontSize: 11 },
   empty: { textAlign: 'center', color: colors.slate500, marginTop: 40, fontSize: 14 },
 });

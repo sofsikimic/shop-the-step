@@ -60,12 +60,12 @@ export const useProductsStore = create((set, get) => ({
     }
   },
 
-  createProduct: async ({ name, unit, price, stock }) => {
+  createProduct: async ({ name, unit, price, stock, image_url }) => {
     set({ isLoading: true, error: null, success: null });
     try {
       const data = await apiFetch('/api/products', {
         method: 'POST',
-        body: JSON.stringify({ name, unit, price, stock }),
+        body: JSON.stringify({ name, unit, price, stock, image_url }),
       });
       set({ isLoading: false, success: data.message || 'Product created.' });
       await get().fetchProducts();

@@ -22,8 +22,8 @@ def create_app():
     # JWT config (tokens replace the old session cookie auth)
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", app.config["SECRET_KEY"])
     app.config["JWT_TOKEN_LOCATION"] = ["headers"]
-    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = int(os.getenv("JWT_EXPIRES_SECONDS", 60 * 60 * 24 * 30))  # 30 days
-    app.config["JWT_REFRESH_TOKEN_EXPIRES"] = int(os.getenv("JWT_REFRESH_EXPIRES_SECONDS", 60 * 60 * 24 * 60))  # 60 days
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = int(os.getenv("JWT_ACCESS_EXPIRES_SECONDS", 60 * 15))          # 15 min
+    app.config["JWT_REFRESH_TOKEN_EXPIRES"] = int(os.getenv("JWT_REFRESH_EXPIRES_SECONDS", 60 * 60 * 24 * 30))  # 30 dana
 
     cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173")
     CORS(app, supports_credentials=True, origins=[o.strip() for o in cors_origins.split(",")])

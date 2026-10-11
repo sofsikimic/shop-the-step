@@ -89,7 +89,11 @@ def create_product():
     if stock < 0:
         return jsonify({"error": "Stock must be >= 0."}), 400
 
-    product = Product(name=name, unit=unit, price=price, stock=stock)
+    image_url = (data.get("image_url") or "").strip() or None
+    if image_url and len(image_url) > 500:
+      return jsonify({"error": "Image URL must be at most 500 characters."}), 400
+
+    product = Product(name=name, unit=unit, price=price, stock=stock, image_url=image_url)
 
     db.session.add(product)
     try:
@@ -106,6 +110,7 @@ def create_product():
             "unit": product.unit,
             "price": str(product.price),
             "stock": product.stock,
+            "image_url": product.image_url,
         }
     }), 201
 
@@ -195,6 +200,11 @@ def update_product(product_id: int):
         if stock < 0:
             return jsonify({"error": "Stock must be >= 0."}), 400
         product.stock = stock
+        if "image_url" in data:
+          image_url = (data.get("image_url") or "").strip() or None
+        if image_url and len(image_url) > 500:
+            return jsonify({"error": "Image URL must be at most 500 characters."}), 400
+        product.image_url = image_url
 
     try:
         db.session.commit()
@@ -210,6 +220,7 @@ def update_product(product_id: int):
             "unit": product.unit,
             "price": str(product.price),
             "stock": product.stock,
+            "image_url": product.image_url,
         }
     }), 200
 
@@ -316,6 +327,7 @@ def list_products():
                 "unit": p.unit,
                 "price": str(p.price),
                 "stock": p.stock,
+                "image_url": p.image_url,
             }
             for p in products
         ],
@@ -361,5 +373,6 @@ def get_product(product_id: int):
             "unit": p.unit,
             "price": str(p.price),
             "stock": p.stock,
+            "image_url": p.image_url,
         }
     }), 200

@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
-  ActivityIndicator, TextInput, Modal, ScrollView, Alert
+  ActivityIndicator, TextInput, Modal, ScrollView, Alert, Image
 } from 'react-native';
 import { router } from 'expo-router';
 import {
   RefreshCw, Plus, Pencil, Trash2, ExternalLink,
-  Tag, Ruler, DollarSign, Boxes, X, Save, PlusCircle,
+  Tag, Ruler, DollarSign, Boxes, X, Save, PlusCircle, Image as ImageIcon,
   BarChart2, Package, CookingPot, ShoppingBag
 } from 'lucide-react-native';
 import { useAuthStore } from '../../stores/authStore';
@@ -152,7 +152,7 @@ function OverviewTab() {
   return (
     <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
       <View style={styles.tabHeader}>
-        <View>
+        <View style={{ flex: 1 }}>
           <Text style={styles.tabTitle}>Overview</Text>
           <Text style={styles.tabSubtitle}>KPIs for the last {days} day(s).</Text>
         </View>
@@ -164,22 +164,28 @@ function OverviewTab() {
 
       {/* Filters */}
       <View style={[styles.filterBox, { marginBottom: 12 }]}>
-        <Text style={styles.label}>Range (days)</Text>
-        <TextInput
-          style={[styles.searchInput, { marginBottom: 8 }]}
-          value={String(days)}
-          onChangeText={(v) => setQuery({ days: Number(v || 30) })}
-          keyboardType="numeric"
-          placeholderTextColor={colors.slate500}
-        />
-        <Text style={styles.label}>Low stock threshold</Text>
-        <TextInput
-          style={[styles.searchInput, { marginBottom: 8 }]}
-          value={String(lowStock)}
-          onChangeText={(v) => setQuery({ lowStock: Number(v || 0) })}
-          keyboardType="numeric"
-          placeholderTextColor={colors.slate500}
-        />
+        <View style={{ flexDirection: 'row', gap: 8 }}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.label}>Range (days)</Text>
+            <TextInput
+              style={[styles.searchInput, { marginBottom: 8 }]}
+              value={String(days)}
+              onChangeText={(v) => setQuery({ days: Number(v || 30) })}
+              keyboardType="numeric"
+              placeholderTextColor={colors.slate500}
+            />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.label}>Low stock</Text>
+            <TextInput
+              style={[styles.searchInput, { marginBottom: 8 }]}
+              value={String(lowStock)}
+              onChangeText={(v) => setQuery({ lowStock: Number(v || 0) })}
+              keyboardType="numeric"
+              placeholderTextColor={colors.slate500}
+            />
+          </View>
+        </View>
         <TouchableOpacity style={[styles.applyBtn, { alignSelf: 'stretch' }]} onPress={() => { clearMessages(); fetchOverview({ days, lowStock }); }}>
           <Text style={styles.applyBtnText}>Apply</Text>
         </TouchableOpacity>
@@ -261,8 +267,8 @@ function OverviewTab() {
               return (
                 <View key={i}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <Text style={{ fontSize: 12, fontWeight: '600', color: colors.slate700 }}>{d.status}</Text>
-                    <Text style={{ fontSize: 12, color: colors.slate600 }}>{d.count} ({pct}%)</Text>
+                    <Text style={{ fontSize: 11, fontWeight: '600', color: colors.slate700 }}>{d.status}</Text>
+                    <Text style={{ fontSize: 11, color: colors.slate600 }}>{d.count} ({pct}%)</Text>
                   </View>
                   <View style={overviewStyles.progressBg}>
                     <View style={[overviewStyles.progressFill, { width: `${pct}%`, backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }]} />
@@ -285,8 +291,8 @@ function OverviewTab() {
               return (
                 <View key={i}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <Text style={{ fontSize: 12, fontWeight: '600', color: colors.slate700 }} numberOfLines={1}>{d.name}</Text>
-                    <Text style={{ fontSize: 12, color: colors.slate600 }}>${d.revenue.toFixed(2)}</Text>
+                    <Text style={{ fontSize: 11, fontWeight: '600', color: colors.slate700 }} numberOfLines={1}>{d.name}</Text>
+                    <Text style={{ fontSize: 11, color: colors.slate600 }}>${d.revenue.toFixed(2)}</Text>
                   </View>
                   <View style={overviewStyles.progressBg}>
                     <View style={[overviewStyles.progressFill, { width: `${pct}%`, backgroundColor: colors.red }]} />
@@ -322,8 +328,8 @@ const overviewStyles = StyleSheet.create({
   barChart: { flexDirection: 'row', alignItems: 'flex-end', gap: 8, paddingBottom: 4, minHeight: 160 },
   barCol: { alignItems: 'center', width: 40 },
   bar: { width: 28, borderRadius: 4 },
-  barValue: { fontSize: 9, color: colors.slate600, marginBottom: 2 },
-  barLabel: { fontSize: 9, color: colors.slate500, marginTop: 4, width: 40, textAlign: 'center' },
+  barValue: { fontSize: 11, color: colors.slate600, marginBottom: 2 },
+  barLabel: { fontSize: 11, color: colors.slate500, marginTop: 4, width: 40, textAlign: 'center' },
   progressBg: { height: 8, backgroundColor: colors.slate100, borderRadius: 4, overflow: 'hidden' },
   progressFill: { height: 8, borderRadius: 4 },
 });
@@ -341,6 +347,7 @@ function ProductModal({ open, onClose, product }) {
   const [unit, setUnit] = useState('');
   const [price, setPrice] = useState('');
   const [stock, setStock] = useState('0');
+  const [imageUrl, setImageUrl] = useState('');
 
   useEffect(() => {
     if (!open) return;
@@ -350,8 +357,9 @@ function ProductModal({ open, onClose, product }) {
       setUnit(product.unit || '');
       setPrice(String(product.price ?? ''));
       setStock(String(product.stock ?? 0));
+      setImageUrl(product.image_url || '');
     } else {
-      setName(''); setUnit(''); setPrice(''); setStock('0');
+      setName(''); setUnit(''); setPrice(''); setStock('0'); setImageUrl('');
     }
   }, [open, product?.id]);
 
@@ -367,7 +375,7 @@ function ProductModal({ open, onClose, product }) {
   async function submit() {
     if (!canSubmit) return;
     clearMessages();
-    const payload = { name: name.trim(), unit: unit.trim(), price: Number(price), stock: Number(stock) };
+    const payload = { name: name.trim(), unit: unit.trim(), price: Number(price), stock: Number(stock), image_url: imageUrl.trim() };
     try {
       if (isEdit) { await updateProduct(product.id, payload); }
       else { await createProduct(payload); }
@@ -392,15 +400,19 @@ function ProductModal({ open, onClose, product }) {
               { label: 'Unit', value: unit, set: setUnit, placeholder: 'e.g. 250g', Icon: Ruler },
               { label: 'Price', value: price, set: setPrice, placeholder: 'e.g. 1.99', Icon: DollarSign, keyboard: 'decimal-pad' },
               { label: 'Stock', value: stock, set: setStock, placeholder: '0', Icon: Boxes, keyboard: 'numeric' },
+              { label: 'Image URL (optional)', value: imageUrl, set: setImageUrl, placeholder: 'https://.../slika.jpg', Icon: ImageIcon, keyboard: 'url' },
             ].map(({ label, value, set, placeholder, Icon, keyboard }) => (
               <View key={label} style={{ marginBottom: 14 }}>
                 <Text style={styles.label}>{label}</Text>
                 <View style={styles.inputRow}>
                   <Icon size={16} color={colors.slate500} />
-                  <TextInput style={styles.input} value={value} onChangeText={set} placeholder={placeholder} placeholderTextColor={colors.slate500} keyboardType={keyboard || 'default'} />
+                  <TextInput style={styles.input} value={value} onChangeText={set} placeholder={placeholder} placeholderTextColor={colors.slate500} keyboardType={keyboard || 'default'} autoCapitalize={keyboard === 'url' ? 'none' : 'sentences'} />
                 </View>
               </View>
             ))}
+            {imageUrl.trim() ? (
+              <Image source={{ uri: imageUrl.trim() }} style={{ width: '100%', height: 140, borderRadius: 12, marginBottom: 14 }} resizeMode="cover" />
+            ) : null}
             <View style={modal.actions}>
               <TouchableOpacity style={modal.cancelBtn} onPress={onClose}>
                 <Text style={modal.cancelBtnText}>Cancel</Text>
@@ -439,6 +451,7 @@ function RecipeModal({ open, onClose, recipe }) {
   const [ingredients, setIngredients] = useState([]);
   const [newPid, setNewPid] = useState('');
   const [newQty, setNewQty] = useState('1');
+  const [productQuery, setProductQuery] = useState('');
 
   useEffect(() => {
     if (!open) return;
@@ -448,7 +461,7 @@ function RecipeModal({ open, onClose, recipe }) {
     (async () => {
       if (!recipe?.id) {
         setName(''); setDescription(''); setIngredients([]);
-        setNewPid(''); setNewQty('1');
+        setNewPid(''); setNewQty('1'); setProductQuery('');
         return;
       }
       const full = await fetchRecipeById(recipe.id);
@@ -456,7 +469,7 @@ function RecipeModal({ open, onClose, recipe }) {
       setDescription(full?.description || recipe.description || '');
       const ings = Array.isArray(full?.ingredients) ? full.ingredients : [];
       setIngredients(ings.map((x) => ({ product_id: x.product_id, quantity: x.quantity })));
-      setNewPid(''); setNewQty('1');
+      setNewPid(''); setNewQty('1'); setProductQuery('');
     })();
   }, [open, recipe?.id]);
 
@@ -465,6 +478,14 @@ function RecipeModal({ open, onClose, recipe }) {
     (products || []).forEach((p) => m.set(String(p.id), p));
     return m;
   }, [products]);
+
+  const filteredProducts = useMemo(() => {
+    const q = productQuery.trim().toLowerCase();
+    const available = (products || []).filter(
+      (p) => !ingredients.some((i) => String(i.product_id) === String(p.id))
+    );
+    return q ? available.filter((p) => p.name.toLowerCase().includes(q)) : available;
+  }, [products, productQuery, ingredients]);
 
   const canSubmit = useMemo(() => {
     if (!name.trim() || name.trim().length > 100) return false;
@@ -485,7 +506,7 @@ function RecipeModal({ open, onClose, recipe }) {
     if (!pid || !Number.isInteger(qty) || qty <= 0) return;
     if (ingredients.some((x) => String(x.product_id) === pid)) return;
     setIngredients((prev) => [...prev, { product_id: Number(pid), quantity: qty }]);
-    setNewPid(''); setNewQty('1');
+    setNewPid(''); setNewQty('1'); setProductQuery('');
   }
 
   function removeIngredient(pid) {
@@ -540,7 +561,7 @@ function RecipeModal({ open, onClose, recipe }) {
 
               <View style={recipeModalStyles.addRow}>
                 <View style={[styles.inputRow, { flex: 2 }]}>
-                  <TextInput style={styles.input} value={newPid} onChangeText={setNewPid} placeholder="Product ID..." placeholderTextColor={colors.slate500} keyboardType="numeric" />
+                  <TextInput style={styles.input} value={productQuery} onChangeText={(v) => { setProductQuery(v); setNewPid(''); }} placeholder="Search product by name..." placeholderTextColor={colors.slate500} />
                 </View>
                 <View style={[styles.inputRow, { flex: 1 }]}>
                   <TextInput style={styles.input} value={newQty} onChangeText={setNewQty} placeholder="Qty" placeholderTextColor={colors.slate500} keyboardType="numeric" />
@@ -557,16 +578,16 @@ function RecipeModal({ open, onClose, recipe }) {
               <ScrollView style={recipeModalStyles.productList} nestedScrollEnabled>
                 {productsLoading ? (
                   <ActivityIndicator size="small" color={colors.red} style={{ margin: 10 }} />
-                ) : (products || []).length === 0 ? (
-                  <Text style={[styles.empty, { marginVertical: 10 }]}>No products available. Add a product first.</Text>
+                ) : filteredProducts.length === 0 ? (
+                  <Text style={[styles.empty, { marginVertical: 10 }]}>No products match.</Text>
                 ) : (
-                  (products || []).map((p) => (
+                  filteredProducts.map((p) => (
                     <TouchableOpacity
                       key={p.id}
                       style={[recipeModalStyles.productItem, newPid === String(p.id) && recipeModalStyles.productItemActive]}
-                      onPress={() => setNewPid(String(p.id))}
+                      onPress={() => { setNewPid(String(p.id)); setProductQuery(p.name); }}
                     >
-                      <Text style={recipeModalStyles.productItemText}>#{p.id} — {p.name} ({p.unit})</Text>
+                      <Text style={recipeModalStyles.productItemText}>{p.name} ({p.unit})</Text>
                     </TouchableOpacity>
                   ))
                 )}
@@ -657,7 +678,7 @@ function ProductsTab() {
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.tabHeader}>
-        <View>
+        <View style={{ flex: 1 }}>
           <Text style={styles.tabTitle}>Products</Text>
           <Text style={styles.tabSubtitle}>Create, update and delete products. ({count} total)</Text>
         </View>
@@ -752,7 +773,7 @@ function RecipesTab() {
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.tabHeader}>
-        <View>
+        <View style={{ flex: 1 }}>
           <Text style={styles.tabTitle}>Recipes</Text>
           <Text style={styles.tabSubtitle}>Manage recipes. ({count} total)</Text>
         </View>
@@ -837,7 +858,7 @@ function OrdersTab() {
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.tabHeader}>
-        <View>
+        <View style={{ flex: 1 }}>
           <Text style={styles.tabTitle}>Orders</Text>
           <Text style={styles.tabSubtitle}>View all orders and update status. ({count} total)</Text>
         </View>
@@ -952,7 +973,7 @@ export default function Admin() {
             style={[styles.tabBtn, tab === key && styles.tabBtnActive]}
             onPress={() => setTab(key)}
           >
-            <Icon size={16} color={tab === key ? colors.red : colors.slate600} />
+            <Icon size={14} color={tab === key ? colors.red : colors.slate600} />
             <Text style={[styles.tabBtnText, tab === key && styles.tabBtnTextActive]}>{label}</Text>
           </TouchableOpacity>
         ))}
@@ -984,7 +1005,7 @@ const modal = StyleSheet.create({
 const recipeModalStyles = StyleSheet.create({
   ingredientsBox: { borderWidth: 1, borderColor: colors.slate200, borderRadius: radius.md, padding: 12, marginTop: 12 },
   ingredientsTitle: { fontSize: 14, fontWeight: '800', color: colors.slate900 },
-  ingredientsSubtitle: { fontSize: 12, color: colors.slate500, marginTop: 2, marginBottom: 10 },
+  ingredientsSubtitle: { fontSize: 11, color: colors.slate500, marginTop: 2, marginBottom: 10 },
   addRow: { flexDirection: 'row', gap: 8, alignItems: 'center', marginBottom: 6 },
   addBtn: { backgroundColor: colors.green, padding: 10, borderRadius: radius.sm },
   hintText: { fontSize: 11, color: colors.slate500, marginBottom: 6 },
@@ -994,57 +1015,57 @@ const recipeModalStyles = StyleSheet.create({
   productItemText: { fontSize: 13, color: colors.slate700 },
   ingredientRow: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.slate200, borderRadius: radius.sm, padding: 10, marginBottom: 6, gap: 8 },
   ingredientName: { fontSize: 13, fontWeight: '700', color: colors.slate900 },
-  ingredientUnit: { fontSize: 12, color: colors.slate500 },
+  ingredientUnit: { fontSize: 11, color: colors.slate500 },
   qtyInput: { width: 50, borderWidth: 1, borderColor: colors.slate200, borderRadius: radius.sm, padding: 6, textAlign: 'center', fontSize: 13 },
   removeBtn: { padding: 6, borderRadius: radius.sm, backgroundColor: colors.redLight },
 });
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.white },
-  adminHeader: { padding: 16, borderBottomWidth: 1, borderBottomColor: colors.slate200 },
-  adminTitle: { fontSize: 22, fontWeight: '800', color: colors.slate900 },
-  adminSubtitle: { fontSize: 13, color: colors.slate600, marginTop: 2 },
-  tabBar: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: colors.slate200, paddingHorizontal: 8, paddingVertical: 6, gap: 6 },
-  tabBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 10, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.slate200, backgroundColor: colors.white, flex: 1 },
+  adminHeader: { paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: colors.slate200 },
+  adminTitle: { fontSize: 18, fontWeight: '700', color: colors.slate900 },
+  adminSubtitle: { fontSize: 12, color: colors.slate600, marginTop: 2 },
+  tabBar: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: colors.slate200, paddingHorizontal: 8, paddingVertical: 6, gap: 4 },
+  tabBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4, paddingVertical: 8, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.slate200, backgroundColor: colors.white, flex: 1 },
   tabBtnActive: { borderColor: colors.red, backgroundColor: '#fef2f2' },
-  tabBtnText: { fontSize: 12, fontWeight: '600', color: colors.slate600 },
+  tabBtnText: { fontSize: 11, fontWeight: '600', color: colors.slate600 },
   tabBtnTextActive: { color: colors.red },
   tabContent: { flex: 1, padding: 16 },
-  tabHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 },
-  tabTitle: { fontSize: 18, fontWeight: '800', color: colors.slate900 },
-  tabSubtitle: { fontSize: 13, color: colors.slate600, marginTop: 2 },
+  tabHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 12 },
+  tabTitle: { fontSize: 16, fontWeight: '700', color: colors.slate900 },
+  tabSubtitle: { fontSize: 12, color: colors.slate600, marginTop: 2 },
   kpiGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 16 },
-  kpiCard: { width: '46%', borderWidth: 1, borderColor: colors.slate200, borderRadius: radius.md, padding: 14, backgroundColor: colors.white },
-  kpiTitle: { fontSize: 11, fontWeight: '700', color: colors.slate500, textTransform: 'uppercase' },
-  kpiValue: { fontSize: 22, fontWeight: '800', color: colors.slate900, marginTop: 4 },
+  kpiCard: { flexBasis: '47%', flexGrow: 1, borderWidth: 1, borderColor: colors.slate200, borderRadius: radius.md, padding: 12, backgroundColor: colors.white },
+  kpiTitle: { fontSize: 10, fontWeight: '700', color: colors.slate500, textTransform: 'uppercase' },
+  kpiValue: { fontSize: 18, fontWeight: '700', color: colors.slate900, marginTop: 4 },
   sectionTitle: { fontSize: 15, fontWeight: '800', color: colors.slate900, marginBottom: 10 },
   searchRow: { flexDirection: 'row', gap: 8, marginBottom: 8 },
-  searchInput: { flex: 1, borderWidth: 1, borderColor: colors.slate200, borderRadius: radius.sm, paddingHorizontal: 12, paddingVertical: 10, fontSize: 14, backgroundColor: colors.slate50, color: colors.slate900 },
+  searchInput: { flex: 1, borderWidth: 1, borderColor: colors.slate200, borderRadius: radius.sm, paddingHorizontal: 12, paddingVertical: 8, fontSize: 13, backgroundColor: colors.slate50, color: colors.slate900 },
   searchBtn: { backgroundColor: colors.red, paddingHorizontal: 14, borderRadius: radius.sm, alignItems: 'center', justifyContent: 'center' },
   searchBtnText: { color: '#fff', fontWeight: '700', fontSize: 13 },
-  applyBtn: { backgroundColor: colors.red, paddingHorizontal: 18, paddingVertical: 12, borderRadius: radius.sm, alignItems: 'center', justifyContent: 'center' },
+  applyBtn: { backgroundColor: colors.red, paddingHorizontal: 18, paddingVertical: 10, borderRadius: radius.sm, alignItems: 'center', justifyContent: 'center' },
   applyBtnText: { color: '#fff', fontWeight: '700', fontSize: 14 },
   filterBox: { borderWidth: 1, borderColor: colors.slate200, borderRadius: radius.md, padding: 12, marginBottom: 12 },
-  smBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderColor: colors.slate200, backgroundColor: colors.white, paddingHorizontal: 12, paddingVertical: 8, borderRadius: radius.sm },
-  smBtnText: { fontSize: 13, fontWeight: '600', color: colors.slate700 },
+  smBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderColor: colors.slate200, backgroundColor: colors.white, paddingHorizontal: 10, paddingVertical: 6, borderRadius: radius.sm },
+  smBtnText: { fontSize: 12, fontWeight: '600', color: colors.slate700 },
   card: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.slate200, borderRadius: radius.lg, padding: 14, marginBottom: 10, backgroundColor: colors.white },
   orderCard: { borderWidth: 1, borderColor: colors.slate200, borderRadius: radius.lg, padding: 14, marginBottom: 10, backgroundColor: colors.white },
   orderCardTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 },
   orderActions: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 10 },
-  cardName: { fontSize: 15, fontWeight: '800', color: colors.slate900 },
+  cardName: { fontSize: 14, fontWeight: '700', color: colors.slate900 },
   cardMeta: { fontSize: 12, color: colors.slate600, marginTop: 4 },
   cardBtns: { flexDirection: 'row', gap: 8 },
   editBtn: { borderWidth: 1, borderColor: colors.slate200, borderRadius: radius.sm, padding: 8, backgroundColor: colors.white },
   deleteBtn: { borderWidth: 1, borderColor: '#fecaca', borderRadius: radius.sm, padding: 8, backgroundColor: colors.redLight },
   badge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 99 },
   badgeText: { fontSize: 11, fontWeight: '700' },
-  statusChip: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 99, borderWidth: 1, borderColor: colors.slate200, backgroundColor: colors.white, marginRight: 6 },
+  statusChip: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 99, borderWidth: 1, borderColor: colors.slate200, backgroundColor: colors.white, marginRight: 6 },
   statusChipActive: { backgroundColor: colors.slate900, borderColor: colors.slate900 },
-  statusChipText: { fontSize: 12, fontWeight: '600', color: colors.slate700 },
+  statusChipText: { fontSize: 11, fontWeight: '600', color: colors.slate700 },
   statusChipTextActive: { color: colors.white },
-  label: { fontSize: 13, fontWeight: '700', color: colors.slate700, marginBottom: 6, marginTop: 14 },
-  inputRow: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: colors.slate50, borderWidth: 1, borderColor: colors.slate200, borderRadius: radius.sm, paddingHorizontal: 12, paddingVertical: 10 },
-  input: { flex: 1, fontSize: 14, color: colors.slate900 },
+  label: { fontSize: 12, fontWeight: '700', color: colors.slate700, marginBottom: 6, marginTop: 10 },
+  inputRow: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: colors.slate50, borderWidth: 1, borderColor: colors.slate200, borderRadius: radius.sm, paddingHorizontal: 12, paddingVertical: 8 },
+  input: { flex: 1, fontSize: 13, color: colors.slate900 },
   error: { backgroundColor: colors.redLight, borderWidth: 1, borderColor: '#fecaca', borderRadius: radius.sm, padding: 10, color: colors.redDark, fontSize: 13, marginBottom: 12 },
   success: { backgroundColor: '#f0fdf4', borderWidth: 1, borderColor: '#bbf7d0', borderRadius: radius.sm, padding: 10, color: colors.greenDark, fontSize: 13, marginBottom: 12 },
   empty: { textAlign: 'center', color: colors.slate500, marginTop: 20, fontSize: 14 },

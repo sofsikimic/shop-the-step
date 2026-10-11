@@ -221,8 +221,8 @@ const styles = StyleSheet.create({
   heartBtn: { paddingTop: 2 },
   description: { fontSize: 14, color: colors.slate600, marginTop: 8, lineHeight: 20 },
   avgRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 10 },
-  avgText: { fontSize: 12, color: colors.slate500, marginLeft: 6 },
-  noRating: { fontSize: 12, color: colors.slate400, marginTop: 10 },
+  avgText: { fontSize: 11, color: colors.slate500, marginLeft: 6 },
+  noRating: { fontSize: 11, color: colors.slate400, marginTop: 10 },
   rateBox: {
     borderWidth: 1, borderColor: colors.slate200, borderRadius: radius.md,
     padding: 12, marginTop: 14, backgroundColor: colors.slate50,
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md, padding: 12, marginBottom: 8, backgroundColor: colors.slate50,
   },
   ingredientName: { fontSize: 14, fontWeight: '700', color: colors.slate900 },
-  ingredientQty: { fontSize: 12, color: colors.slate600, marginTop: 2 },
+  ingredientQty: { fontSize: 11, color: colors.slate600, marginTop: 2 },
   addOneButton: { backgroundColor: colors.green, padding: 8, borderRadius: radius.sm },
   empty: { textAlign: 'center', color: colors.slate500, marginTop: 20, fontSize: 14 },
 });

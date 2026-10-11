@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   starRow: { flexDirection: 'row', alignItems: 'center', gap: 3, marginTop: 6 },
   ratingText: { fontSize: 11, color: colors.slate500, marginLeft: 4 },
   noRating: { fontSize: 11, color: colors.slate400, marginTop: 6 },
-  myRating: { fontSize: 12, color: '#f59e0b', fontWeight: '600', marginTop: 4 },
+  myRating: { fontSize: 11, color: '#f59e0b', fontWeight: '600', marginTop: 4 },
   cardDesc: { fontSize: 13, color: colors.slate600, marginTop: 8, lineHeight: 18 },
   viewBtn: {
     flexDirection: 'row', alignSelf: 'flex-end', alignItems: 'center', gap: 6,
